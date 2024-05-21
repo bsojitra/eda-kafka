@@ -1,5 +1,5 @@
 const mysql = require("./mysql");
-const cassandra = require("./cassandra");
+const postgres = require("./postgres");
 const mongo = require("./mongo");
 
-module.exports = { mysql, cassandra, mongo };
+module.exports = { mysql, postgres, mongo };

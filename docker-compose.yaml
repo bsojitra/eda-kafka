@@ -65,9 +65,9 @@ services:
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: example
-      MYSQL_DATABASE: your_database
-      MYSQL_USER: your_username
-      MYSQL_PASSWORD: your_password
+      MYSQL_DATABASE: db
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
     ports:
       - "3307:3306"
 
@@ -75,19 +75,39 @@ services:
     image: cassandra:latest
     restart: always
     ports:
-      - "9042:9042"  # Cassandra native transport port
-      - "7000:7000"  # Cassandra inter-node communication port
-      - "7001:7001"  # Cassandra SSL inter-node communication port
-      - "7199:7199"  # Cassandra JMX monitoring port
-      - "9160:9160"  # Cassandra Thrift client port
+      - "9042:9042"
+      - "7000:7000"
+      - "7001:7001"
+      - "7199:7199"
+      - "9160:9160"
     environment:
-      - CASSANDRA_CLUSTER_NAME=MyCassandraCluster  # Change as per your preference
-      - CASSANDRA_ENDPOINT_SNITCH=GossipingPropertyFileSnitch  # Change if needed
-      - MAX_HEAP_SIZE=512M  # Adjust according to your system resources
-      - HEAP_NEWSIZE=100M  # Adjust according to your system resources
+      - CASSANDRA_CLUSTER_NAME=MyCassandraCluster
+      - CASSANDRA_ENDPOINT_SNITCH=GossipingPropertyFileSnitch
+      - MAX_HEAP_SIZE=512M
+      - HEAP_NEWSIZE=100M
 
   mongodb:
     image: mongo:latest
     restart: always
     ports:
       - "27017:27017"
+  
+  postgres:
+    image: postgres:latest
+    restart: always
+    environment:
+      POSTGRES_DB: db
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5432:5432"
+
+  keyclock:
+    image: keycloak/keycloak:latest
+    restart: always
+    ports:
+      - "8080:8080"
+    environment:
+      - KEYCLOAK_ADMIN=admin
+      - KEYCLOAK_ADMIN_PASSWORD=password
+    command: start-dev

@@ -6,7 +6,11 @@ const kafka = new Kafka({
 });
 
 const producer = kafka.producer({
-  createPartitioner: Partitioners.DefaultPartitioner,
+  createPartitioner: () => {
+    return ({ topic, partitionMetadata, message }) => {
+      return 0;
+    };
+  },
 });
 
 const startProducer = async () => {

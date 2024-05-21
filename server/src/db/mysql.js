@@ -4,9 +4,9 @@ const sequelize = new Sequelize({
   dialect: "mysql",
   host: "localhost",
   port: "3307",
-  database: "your_database",
-  username: "your_username",
-  password: "your_password",
+  database: "db",
+  username: "user",
+  password: "password",
   pool: {
     max: 5,
     min: 0,
