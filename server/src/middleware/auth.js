@@ -6,6 +6,7 @@ const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
 const { mysql } = require("../db/connection");
 const bcrypt = require("bcrypt");
+const axios = require("axios");
 
 const corsConfig = {
   origin: ["http://localhost:4200"],
@@ -39,6 +40,34 @@ passport.use(
     },
     async (req, email, password, cb) => {
       if (!email || !password) {
+        return cb(true, false, { message: "invalid credentials" });
+      }
+
+      // TODO: login here
+      try {
+        const REALM_NAME = "dummy-realm";
+
+        const params = new URLSearchParams();
+        params.append("grant_type", "password");
+        params.append("client_id", "dummy-client");
+        params.append("client_secret", "w4xkS5TDsuzQG4jQ7aQ3gNbZxNloWMtk");
+        params.append("username", email);
+        params.append("password", password);
+
+        const response = await axios.post(
+          `http://localhost:8080/realms/${REALM_NAME}/protocol/openid-connect/token`,
+          params,
+          {
+            headers: {
+              "Content-Type": "application/x-www-form-urlencoded",
+            },
+          }
+        );
+
+        const { access_token } = response.data;
+        console.log(access_token);
+      } catch (error) {
+        console.log(error);
         return cb(true, false, { message: "invalid credentials" });
       }
 

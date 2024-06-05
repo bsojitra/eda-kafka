@@ -30,10 +30,43 @@ router.post("/signup", async (req, res) => {
     const password = req.body.password;
     const hashedPassword = await bcrypt.hash(password, 15);
 
-    await mysql.db.User.create({
-      email,
-      password: hashedPassword,
+    const KcAdminClient = (await import("@keycloak/keycloak-admin-client"))
+      .default;
+
+    const kcAdminClient = new KcAdminClient({
+      baseUrl: "http://127.0.0.1:8080",
+      realmName: "master",
     });
+
+    await kcAdminClient.auth({
+      username: "admin",
+      password: "password",
+      grantType: "password",
+      clientId: "admin-cli",
+    });
+
+    const u = await kcAdminClient.users.create({
+      email,
+      enabled: true,
+      realm: "dummy-realm",
+      credentials: [
+        {
+          type: "password",
+          value: password,
+          temporary: false,
+        },
+      ],
+      attributes: {
+        hello: "there",
+      },
+    });
+
+    console.log(u);
+
+    // await mysql.db.User.create({
+    //   email,
+    //   password: hashedPassword,
+    // });
 
     res.status(201);
   } catch (error) {
